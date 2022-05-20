@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
-
 using LabManager.Database;
 
 var databaseSetup = new DatabaseSetup();
+
 
 //Routing
 var modelName = args[0];
