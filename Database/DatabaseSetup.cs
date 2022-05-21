@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 
 namespace LabManager.Database; 
 
-class DatabaseSetup  
+class DatabaseSetup   
 {
     public DatabaseSetup()
     {
