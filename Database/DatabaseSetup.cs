@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 
-namespace LabManager.Database;
+namespace LabManager.Database; 
 
 class DatabaseSetup 
 {

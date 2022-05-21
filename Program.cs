@@ -3,9 +3,8 @@ using LabManager.Database;
 
 var databaseSetup = new DatabaseSetup();
 
-
 //Routing
-var modelName = args[0];
+var modelName = args[0]; 
 var modelAction = args[1];
 
 if(modelName == "Computer")
