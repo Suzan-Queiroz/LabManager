@@ -26,7 +26,7 @@ if(modelName == "Computer")
                 "{0},{1},{2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2)
             );
         }
-        connection.Close();
+        connection.Close(); 
     }
 
     if(modelAction == "New")
