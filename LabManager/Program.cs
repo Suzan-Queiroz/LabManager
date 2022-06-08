@@ -1,117 +1,117 @@
 ﻿using Microsoft.Data.Sqlite;
-
-//Como se conectar a um banco de dados e executar um comando usando o ADO.NET
-
-//Connection
-var connection = new SqliteConnection("Data Source=database.db");
-connection.Open();
-
-//Command
-var command = connection.CreateCommand();
-command.CommandText = @"
-    CREATE TABLE IF NOT EXISTS Computers(
-        id int not null primary key,
-        ram varchar(100) not null,
-        processor varchar(100) not null
-    );
-    CREATE TABLE IF NOT EXISTS Lab(
-        id int not null primary key,
-        number int not null,
-        name varchar(100) not null,
-        block varchar(50) not null
-)";
-
-//Execute
-command.ExecuteNonQuery();
-connection.Close();
+using LabManager.Database;
+using LabManager.Repositories;
+using LabManager.Models;
 
 //Routing
 var modelName = args[0];
 var modelAction = args[1];
 
+var databaseConfig = new DatabaseConfig(); 
+new DatabaseSetup(databaseConfig);
+
 if(modelName == "Computer")
+{
+    var computerRepository = new ComputerRepository(databaseConfig);
+    if(modelAction == "List")
+    {
+        Console.WriteLine("Computer List");
+        foreach (var computer in computerRepository.GetAll())
+        {
+            Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
+        }
+    }
+
+    if(modelAction == "New")
+    {
+        Console.WriteLine("Computer New");
+        var id = Convert.ToInt32(args[2]);
+        var ram = args[3];
+        var processor = args[4];
+        
+        var computer = new Computer(id, ram, processor);
+        var result = computerRepository.Save(computer);
+        Console.WriteLine("{0},{1},{2}", result.Id, result.Ram, result.Processor);
+    }
+
+    if(modelAction == "Show")
+    {
+        Console.WriteLine("Computer Show");
+        var id = Convert.ToInt32(args[2]);
+
+        if(computerRepository.ExistsById(id))
+        {
+            var computer = computerRepository.GetById(id);
+            Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
+        }
+        else 
+        {
+            Console.WriteLine($"O computador {id} não existe!");
+        }
+    }
+
+    if(modelAction == "Update")
+    {
+        Console.WriteLine("Computer Update");
+        var id = Convert.ToInt32(args[2]);
+        var ram = args[3];
+        var processor = args[4];
+
+        var computer = new Computer(id, ram, processor);
+        computerRepository.Update(computer);
+        Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
+    }
+
+    if(modelAction == "Delete")
+    {
+        Console.WriteLine("Computer Delete");
+        var id = Convert.ToInt32(args[2]);
+        
+        computerRepository.Delete(id);
+        Console.WriteLine("Computer {0}", id);
+    }
+}
+
+if(modelName == "Lab")
 {
     if(modelAction == "List")
     {
-        Console.WriteLine("List Computer");
-        connection = new SqliteConnection("Data Source=database.db");
+        Console.WriteLine("Lab List");
+        var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
-
-        command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Computers;";
-
+        
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Labs;";
+        
         var reader = command.ExecuteReader();
 
         while(reader.Read())
         {
-            Console.WriteLine(
-                "{0},{1},{2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2)
-            );
+            Console.WriteLine("{0},{1},{2},{3}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
         }
+        
+        reader.Close();
         connection.Close();
     }
 
     if(modelAction == "New")
     {
         var id = Convert.ToInt32(args[2]);
-        var ram = args[3];
-        var processor = args[4];
+        var number = args[3];
+        var name = args[4];
+        var block = args[5];
         
-        connection = new SqliteConnection("Data Source=database.db");
+        var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
-
-        command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Computers VALUES($id, $ram, $processor)";
-        command.Parameters.AddWithValue("$id", id);
-        command.Parameters.AddWithValue("$ram", ram);
-        command.Parameters.AddWithValue("$processor", processor);
-
-        command.ExecuteNonQuery();
-        connection.Close();
-    }
-}
-
-if (modelName == "Lab")
-{
-    if (modelAction == "List")
-        {
-        Console.WriteLine("List Lab");
-        connection = new SqliteConnection("Data Source=database.db");
-        connection.Open();
-
-        command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Lab;";
         
-        var reader = command.ExecuteReader();
-        
-        while (reader.Read())
-            {
-            Console.WriteLine(
-                "{0}, {1}, {2}, {3}", reader.GetInt32(0), reader.GetInt32(1), 
-                reader.GetString(2), reader.GetString(3)
-                );
-            }
-        connection.Close();
-        }
-
-        if (modelAction == "New")
-        {
-        int id = Convert.ToInt32(args[2]);
-        int number = Convert.ToInt32(args[3]);
-        string name = args[4];
-        string block = args[5];
-
-        connection = new SqliteConnection("Data Source=database.db");
-        connection.Open();
-
-        command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Lab VALUES($id, $number, $name, $block);";
+        var command = connection.CreateCommand();
+        command.CommandText = "INSERT INTO Labs VALUES ($id, $number, $name, $block);";
         command.Parameters.AddWithValue("$id", id);
         command.Parameters.AddWithValue("$number", number);
         command.Parameters.AddWithValue("$name", name);
         command.Parameters.AddWithValue("$block", block);
-
+        
         command.ExecuteNonQuery();
         connection.Close();
-        }
+    }
 }
