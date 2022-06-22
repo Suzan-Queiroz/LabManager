@@ -23,10 +23,11 @@ class ComputerRepository
 
         while(reader.Read()) 
         {
-            computers.Add(readerToComputer(reader));
+            var computer = ReaderToComputer(reader);
+            computers.Add(computer);
         }
+        reader.Close();
         connection.Close();
-
         return computers;
     }
 
@@ -103,7 +104,7 @@ class ComputerRepository
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = "SELECT count(id) FROM Computers WHERE id = $id;";
+        command.CommandText = "SELECT COUNT(id) FROM Computers WHERE id = $id;";
         command.Parameters.AddWithValue("$id", id);
 
         bool result = Convert.ToBoolean(command.ExecuteScalar());
