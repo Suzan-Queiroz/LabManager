@@ -2,7 +2,6 @@
 using LabManager.Repositories;
 using LabManager.Models;
 
-//Routing
 var modelName = args[0];
 var modelAction = args[1];
 
