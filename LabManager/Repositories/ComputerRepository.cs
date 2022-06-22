@@ -13,12 +13,12 @@ class ComputerRepository
     
     public IEnumerable<Computer> GetAll()
     {
-        var computers = new List<Computer>();
+        // var computers = new List<Computer>();
 
-        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+       
         //var computers = new List<Computer>();
         //var connection = new SqliteConnection(_databaseConfig.ConnectionString);
-        using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        using var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
 
         /*
@@ -36,7 +36,7 @@ class ComputerRepository
 
     public Computer Save(Computer computer)
     {
-        using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        using var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
 
         /*
@@ -54,7 +54,7 @@ class ComputerRepository
 
      public Computer GetById(int id)
     {
-        using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        using var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
 
         /*
@@ -79,7 +79,7 @@ class ComputerRepository
     }
     public Computer Update(Computer computer)
     {
-        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
         var command = connection.CreateCommand();
         command.CommandText = @"
@@ -95,7 +95,7 @@ class ComputerRepository
 
     public void Delete(int id)
     {
-        using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        using var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
 
         connection.Execute("DELETE FROM Computers WHERE id = @Id", new {Id = id});
@@ -103,7 +103,7 @@ class ComputerRepository
 
     public bool ExistById(int id)
     {
-        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
 
         /*

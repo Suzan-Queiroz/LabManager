@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using LabManager.Database;
+﻿using LabManager.Database;
 using LabManager.Repositories;
 using LabManager.Models;
 
@@ -39,7 +38,7 @@ if(modelName == "Computer")
         Console.WriteLine("Computer Show");
         var id = Convert.ToInt32(args[2]);
 
-        if(computerRepository.ExistsById(id))
+        if(computerRepository.ExistById(id))
         {
             var computer = computerRepository.GetById(id);
             Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
@@ -74,6 +73,7 @@ if(modelName == "Computer")
 
 if(modelName == "Lab")
 {
+    var labRepository = new LabRepository(databaseConfig);
     if(modelAction == "List")
     {
         Console.WriteLine("Lab List");
@@ -81,15 +81,13 @@ if(modelName == "Lab")
         //var connection = new SqliteConnection(databaseConfig.ConnectionString);
         //connection.Open();
         
-        var reader = command.ExecuteReader();
+
 
         foreach (var lab in labRepository.GetAll())
         {
             Console.WriteLine($"{lab.Id}, {lab.Number}, {lab.Name}, {lab.Block}");
         }
         
-        reader.Close();
-        connection.Close();
     }
 
     //var command = connection.CreateCommand();
@@ -97,22 +95,12 @@ if(modelName == "Lab")
     if(modelAction == "New")
     {
         var id = Convert.ToInt32(args[2]);
-        var number = args[3];
+        var number = Convert.ToInt32(args[3]);
         var name = args[4];
-        var block = args[5];
+        var block = Convert.ToChar(args[5]);
         
-        var connection = new SqliteConnection(databaseConfig.ConnectionString);
-        connection.Open();
-        
-        var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Labs VALUES ($id, $number, $name, $block);";
-        command.Parameters.AddWithValue("$id", id);
-        command.Parameters.AddWithValue("$number", number);
-        command.Parameters.AddWithValue("$name", name);
-        command.Parameters.AddWithValue("$block", block);
-        
-        command.ExecuteNonQuery();
-        connection.Close();
+        var lab = new Lab(id, number, name, block);
+        labRepository.Save(lab);
     }
 
     if (modelAction == "Update")

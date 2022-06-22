@@ -1,6 +1,7 @@
-using Microsoft.Data.Sqlite;
-using LabManager.Models;
 using LabManager.Database;
+using LabManager.Models;
+using Microsoft.Data.Sqlite;
+using Dapper;
 
 namespace LabManager.Repositories;
 class LabRepository
@@ -26,9 +27,9 @@ class LabRepository
         while (reader.Read())
         {
             var id = reader.GetInt32(0);
-            var number = reader.GetString(1);
+            var number = reader.GetInt32(1);
             var name = reader.GetString(2);
-            var block = reader.GetString(3);
+            var block = reader.GetChar(3);
             var lab = new Lab(id, number, name, block);
             labs.Add(lab); 
         }
@@ -104,9 +105,9 @@ class LabRepository
         var reader = command.ExecuteReader();
         reader.Read();
 
-        var number = reader.GetString(1);
+        var number = reader.GetInt32(1);
         var name = reader.GetString(2);
-        var block = reader.GetString(3);
+        var block = reader.GetChar(3);
         var lab = new Lab(id, number, name, block);
 
         connection.Close();
@@ -120,7 +121,7 @@ class LabRepository
 
     private Lab ReaderToLab(SqliteDataReader  reader)
     {
-        var lab = new Lab(reader.GetInt32(0), reader.GetString(1), reader.GetString(2),  reader.GetChar(3));
+        var lab = new Lab(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2),  reader.GetChar(3));
         return lab;
     }
 
